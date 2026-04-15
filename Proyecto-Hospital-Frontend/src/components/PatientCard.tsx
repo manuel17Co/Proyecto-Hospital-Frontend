@@ -32,7 +32,7 @@ export default function PatientCard({ patient }: Props) {
         
         <TouchableOpacity
           style={styles.actionBtn}
-          onPress={() => router.push(`../detalle/${patient.id}`)}
+          onPress={() => router.push(`/(tabs)/(pacientes)/detalle/${patient.id}`)}
         >
           <Ionicons name="eye-outline" size={18} color={COLORS.white} />
           <Text style={styles.actionText}>Ver</Text>
@@ -40,7 +40,7 @@ export default function PatientCard({ patient }: Props) {
 
         <TouchableOpacity
           style={styles.actionBtn}
-          onPress={() => router.push(`../editar/${patient.id}`)}
+          onPress={() => router.push(`/(tabs)/(pacientes)/editar/${patient.id}`)}
         >
           <Ionicons name="create-outline" size={18} color={COLORS.white} />
           <Text style={styles.actionText}>Editar</Text>

@@ -5,6 +5,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import { Slot } from "expo-router";
 
+import { AuthProvider } from "../src/context/AuthContext";
 import { PatientsProvider } from "../src/context/PatientsContext";
 
 export default function Layout() {
@@ -16,8 +17,10 @@ export default function Layout() {
   if (!loaded) return null;
 
   return (
-    <PatientsProvider>
-      <Slot /> 
-    </PatientsProvider>
+    <AuthProvider>
+      <PatientsProvider>
+        <Slot />
+      </PatientsProvider>
+    </AuthProvider>
   );
 }

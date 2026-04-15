@@ -1,62 +1,90 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import AppButton from "../../../../src/components/AppButton";
 import AppInput from "../../../../src/components/AppInput";
-import { usePatients } from "../../../../src/context/PatientsContext";
+import { deletePatient, getPatientById, updatePatient } from "../../../../src/services/patients";
 import { COLORS } from "../../../../src/styles/colors";
 import { globalStyles } from "../../../../src/styles/globalStyles";
+import { Patient } from "../../../../src/types/patient";
 
 export default function EditarPaciente() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-
-  const { patients, updatePatient, deletePatient } = usePatients();
-
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [documento, setDocumento] = useState("");
   const [telefono, setTelefono] = useState("");
-
-  
-  const [estado, setEstado] = useState<"ACTIVO" | "INACTIVO">("ACTIVO");
+  const [estado, setEstado] = useState<Patient["estado"]>("ACTIVO");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [patientId, setPatientId] = useState<number | null>(null);
 
   useEffect(() => {
-    const paciente = patients.find((p) => p.id === id);
-
-    if (paciente) {
-      setNombre(paciente.nombre);
-      setApellido(paciente.apellido);
-      setDocumento(paciente.documento);
-      setEstado(paciente.estado);
-      setTelefono(paciente.telefono);
+    const parsedId = Number(id);
+    if (!Number.isFinite(parsedId)) {
+      setLoading(false);
+      Alert.alert("Error", "ID de paciente inválido");
+      router.back();
+      return;
     }
-  }, [id, patients]);
+
+    let mounted = true;
+    async function loadPatient() {
+      try {
+        const paciente = await getPatientById(parsedId);
+        if (!mounted) return;
+        setPatientId(paciente.id);
+        setNombre(paciente.nombre);
+        setApellido(paciente.apellido);
+        setDocumento(paciente.documento);
+        setEstado(paciente.estado);
+        setTelefono(paciente.telefono);
+      } catch {
+        if (!mounted) return;
+        Alert.alert("Error", "No se pudo cargar el paciente");
+        router.back();
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadPatient();
+    return () => {
+      mounted = false;
+    };
+  }, [id, router]);
 
  
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!nombre || !apellido || !documento || !estado || !telefono) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
     }
 
-    updatePatient({
-      id: id as string,
-      nombre,
-      apellido,
-      documento,
-      estado,
-      telefono,
-    });
+    if (!patientId) return;
 
-    Alert.alert("Éxito", "Paciente actualizado correctamente");
-    router.back();
+    try {
+      setSubmitting(true);
+      await updatePatient(patientId, {
+        nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        documento: documento.trim(),
+        telefono: telefono.trim(),
+      });
+      Alert.alert("Éxito", "Paciente actualizado correctamente");
+      router.back();
+    } catch {
+      Alert.alert("Error", "No se pudo actualizar el paciente");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   
   const handleDelete = () => {
+    if (!patientId) return;
     Alert.alert(
       "Eliminar paciente",
       "¿Estás seguro que deseas eliminar este paciente?",
@@ -65,14 +93,26 @@ export default function EditarPaciente() {
         {
           text: "Eliminar",
           style: "destructive",
-          onPress: () => {
-            deletePatient(id as string);
-            router.back();
+          onPress: async () => {
+            try {
+              await deletePatient(patientId);
+              router.back();
+            } catch {
+              Alert.alert("Error", "No se pudo eliminar el paciente");
+            }
           },
         },
       ]
     );
   };
+
+  if (loading) {
+    return (
+      <View style={[globalStyles.container, styles.center]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={globalStyles.container}>
@@ -147,7 +187,11 @@ export default function EditarPaciente() {
       </View>
 
       <View style={styles.button}>
-        <AppButton title="Actualizar Paciente" onPress={handleUpdate} />
+        {submitting ? (
+          <ActivityIndicator size="small" color={COLORS.primary} />
+        ) : (
+          <AppButton title="Actualizar Paciente" onPress={() => void handleUpdate()} />
+        )}
       </View>
 
       
@@ -165,6 +209,10 @@ export default function EditarPaciente() {
 const styles = StyleSheet.create({
   button: {
     marginTop: 20,
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   deleteButton: {

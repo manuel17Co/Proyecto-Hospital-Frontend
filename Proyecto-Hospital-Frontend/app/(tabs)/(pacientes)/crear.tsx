@@ -1,43 +1,43 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 
 import AppButton from "../../../src/components/AppButton";
 import AppInput from "../../../src/components/AppInput";
-import { usePatients } from "../../../src/context/PatientsContext"; // 🔥 IMPORTANTE
+import { createPatient } from "../../../src/services/patients";
+import { COLORS } from "../../../src/styles/colors";
 import { globalStyles } from "../../../src/styles/globalStyles";
 
 export default function CrearPaciente() {
   const router = useRouter();
-
-  // 🔥 USAR CONTEXT
-  const { addPatient } = usePatients();
-
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [documento, setDocumento] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [estado, setEstado] = useState<"ACTIVO" | "INACTIVO">("ACTIVO");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleCreate = () => {
-    if (!nombre || !apellido || !documento || !estado) {
+  const handleCreate = async () => {
+    if (!nombre || !apellido || !documento || !telefono) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
     }
-    
-    // 🔥 AGREGAR AL CONTEXT
-    addPatient({
-      id: Date.now().toString(),
-      nombre,
-      apellido,
-      documento,
-      telefono,
-      estado,
-    });
 
-    Alert.alert("Éxito", "Paciente creado correctamente");
+    try {
+      setSubmitting(true);
+      await createPatient({
+        nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        documento: documento.trim(),
+        telefono: telefono.trim(),
+      });
+      Alert.alert("Éxito", "Paciente creado correctamente");
+      router.back();
+    } catch {
+      Alert.alert("Error", "No se pudo crear el paciente");
+    } finally {
+      setSubmitting(false);
+    }
 
-    router.back(); // volver a la lista
   };
 
   return (
@@ -73,26 +73,13 @@ export default function CrearPaciente() {
         placeholder="Ingrese el documento"
       />
 
-      <Text style={{ marginTop: 10, fontWeight: "600" }}>Estado</Text>
-
-<View style={styles.estadoContainer}>
-
-  <AppButton
-    title="ACTIVO"
-    onPress={() => setEstado("ACTIVO")}
-  />
-
-  <AppButton
-    title="INACTIVO"
-    onPress={() => setEstado("INACTIVO")}
-  />
-
-</View>
-
       <View style={styles.button}>
-        <AppButton title="Guardar Paciente" onPress={handleCreate} />
+        {submitting ? (
+          <ActivityIndicator size="small" color={COLORS.primary} />
+        ) : (
+          <AppButton title="Guardar Paciente" onPress={() => void handleCreate()} />
+        )}
       </View>
-
     </View>
   );
 }
@@ -100,11 +87,5 @@ export default function CrearPaciente() {
 const styles = StyleSheet.create({
   button: {
     marginTop: 20,
-  },
-
-  estadoContainer: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
   },
 });

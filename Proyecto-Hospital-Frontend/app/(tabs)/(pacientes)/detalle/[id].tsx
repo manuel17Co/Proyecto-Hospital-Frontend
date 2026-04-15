@@ -1,60 +1,84 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-import { usePatients } from "../../../../src/context/PatientsContext";
+import { getPatientById } from "../../../../src/services/patients";
 import { COLORS } from "../../../../src/styles/colors";
 import { globalStyles } from "../../../../src/styles/globalStyles";
+import { Patient } from "../../../../src/types/patient";
 
 export default function DetallePaciente() {
   const { id } = useLocalSearchParams();
-  const { patients } = usePatients();
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const paciente = patients.find((p) => p.id === id);
+  useEffect(() => {
+    const parsedId = Number(id);
+    if (!Number.isFinite(parsedId)) {
+      setError("ID de paciente inválido.");
+      setLoading(false);
+      return;
+    }
 
-  if (!paciente) {
+    let mounted = true;
+    async function loadDetail() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getPatientById(parsedId);
+        if (mounted) setPatient(data);
+      } catch {
+        if (mounted) setError("No se pudo cargar el paciente.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadDetail();
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={[globalStyles.container, styles.center]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  if (error || !patient) {
     return (
       <View style={globalStyles.container}>
-        <Text>Paciente no encontrado</Text>
+        <Text>{error ?? "Paciente no encontrado."}</Text>
       </View>
     );
   }
 
   return (
     <View style={globalStyles.container}>
-      
       <Text style={globalStyles.title}>Detalle Paciente</Text>
 
       <View style={styles.card}>
-        
         <Text style={styles.name}>
-          {paciente.nombre} {paciente.apellido}
+          {patient.nombre} {patient.apellido}
         </Text>
 
-        <Text style={styles.text}>Documento: {paciente.documento}</Text>
-
-        <Text style={styles.text}>Estado: {paciente.estado}</Text>
+        <Text style={styles.text}>Documento: {patient.documento}</Text>
+        <Text style={styles.text}>Teléfono: {patient.telefono}</Text>
+        <Text style={styles.text}>Estado: {patient.estado}</Text>
 
       </View>
-
-      {/* 🔥 CITAS SIMULADAS */}
-      <Text style={styles.subtitle}>Citas asociadas</Text>
-
-      <View style={styles.cita}>
-        <Ionicons name="calendar-outline" size={18} color={COLORS.primary} />
-        <Text>Consulta general</Text>
-      </View>
-
-      <View style={styles.cita}>
-        <Ionicons name="calendar-outline" size={18} color={COLORS.primary} />
-        <Text>Control mensual</Text>
-      </View>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   card: {
     backgroundColor: COLORS.primary,
     padding: 16,
@@ -71,17 +95,5 @@ const styles = StyleSheet.create({
   text: {
     color: COLORS.textLight,
     marginTop: 5,
-  },
-
-  subtitle: {
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-
-  cita: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 8,
   },
 });

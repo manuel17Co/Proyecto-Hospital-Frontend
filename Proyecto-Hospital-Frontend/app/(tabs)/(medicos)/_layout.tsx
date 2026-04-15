@@ -1,20 +1,47 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Drawer } from 'expo-router/drawer';
+import { COLORS } from '../../../src/styles/colors';
 
 export default function MedicosLayout() {
   return (
-    <Drawer screenOptions={{ headerShown: false }}>
+    <Drawer
+      screenOptions={{
+        headerStyle: { backgroundColor: COLORS.primary },
+        headerTintColor: COLORS.white,
+        drawerActiveTintColor: COLORS.primary,
+      }}
+    >
       <Drawer.Screen
-        name="medicosComponent"
-        options={{ drawerLabel: 'Lista de Médicos' }}
+        name="index"
+        options={{
+          title: 'Médicos',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="medkit-outline" size={size} color={color} />
+          ),
+        }}
       />
       <Drawer.Screen
-        name="agregarMedico"
-        options={{ drawerItemStyle: { display: 'none' } }}
+        name="crear"
+        options={{
+          title: 'Crear Médico',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="person-add-outline" size={size} color={color} />
+          ),
+        }}
       />
-      {/* Nueva pantalla oculta */}
       <Drawer.Screen
-        name="editarMedico"
-        options={{ drawerItemStyle: { display: 'none' } }}
+        name="detalle/[id]"
+        options={{
+          title: 'Detalle Médico',
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
+      <Drawer.Screen
+        name="editar/[id]"
+        options={{
+          title: 'Editar Médico',
+          drawerItemStyle: { display: 'none' },
+        }}
       />
     </Drawer>
   );

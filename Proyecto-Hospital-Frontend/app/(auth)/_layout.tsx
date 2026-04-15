@@ -1,10 +1,10 @@
-import { Redirect } from "expo-router";
+import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
-import { useAuth } from '../src/context/AuthContext';
-import { COLORS } from '../src/styles/colors';
-import { globalStyles } from '../src/styles/globalStyles';
+import { useAuth } from '../../src/context/AuthContext';
+import { COLORS } from '../../src/styles/colors';
+import { globalStyles } from '../../src/styles/globalStyles';
 
-export default function Index() {
+export default function AuthLayout() {
   const { isLoading, isAuthenticated } = useAuth();
 
   if (isLoading) {
@@ -19,5 +19,11 @@ export default function Index() {
     return <Redirect href="/(tabs)/(citas)/citasComponent" />;
   }
 
-  return <Redirect href="/(auth)/login" />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    />
+  );
 }

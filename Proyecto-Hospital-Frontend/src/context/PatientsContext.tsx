@@ -5,7 +5,7 @@ type PatientsContextType = {
   patients: Patient[];
   addPatient: (patient: Patient) => void;
   updatePatient: (patient: Patient) => void;
-  deletePatient: (id: string) => void;
+  deletePatient: (id: number) => void;
 };
 
 const PatientsContext = createContext<PatientsContextType | undefined>(undefined);
@@ -13,7 +13,7 @@ const PatientsContext = createContext<PatientsContextType | undefined>(undefined
 export const PatientsProvider = ({ children }: { children: ReactNode }) => {
   const [patients, setPatients] = useState<Patient[]>([
     {
-      id: "1",
+      id: 1,
       nombre: "Juan",
       apellido: "Perez",
       documento: "123456",
@@ -32,7 +32,7 @@ export const PatientsProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const deletePatient = (id: string) => {
+  const deletePatient = (id: number) => {
     setPatients((prev) => prev.filter((p) => p.id !== id));
   };
 

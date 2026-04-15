@@ -1,15 +1,14 @@
-export type Patient = {
+export type Doctor = {
   id: number;
   nombre: string;
   apellido: string;
-  documento: string;
+  especialidad: string;
   telefono: string;
-  estado: "ACTIVO" | "INACTIVO";
 };
 
-export type PatientPayload = {
+export type DoctorPayload = {
   nombre: string;
   apellido: string;
-  documento: string;
+  especialidad: string;
   telefono: string;
 };
