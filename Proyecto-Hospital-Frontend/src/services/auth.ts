@@ -16,3 +16,15 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
 export async function getMe(): Promise<MeResponse> {
   return ApiClient.get<MeResponse>('/auth/me');
 }
+
+export const forgotPassword = async (email: string) => {
+  return await ApiClient.post('/auth/forgot-password', { email });
+};
+
+export const validateResetCode = async (email: string, otp: string) => {
+  return await ApiClient.post('/auth/validate-reset-code', { email, otp });
+};
+
+export const resetPassword = async (token: string, newPassword: string) => {
+  return await ApiClient.post('/auth/reset-password', { token, newPassword });
+};
