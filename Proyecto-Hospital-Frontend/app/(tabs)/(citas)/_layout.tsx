@@ -7,7 +7,7 @@ export default function CitasLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="citasComponent" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

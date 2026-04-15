@@ -7,7 +7,7 @@ export default function InstalacionesLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="instalacionesComponent" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

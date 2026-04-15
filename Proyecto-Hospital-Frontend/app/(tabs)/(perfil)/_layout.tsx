@@ -7,7 +7,7 @@ export default function PerfilLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="perfilComponent" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

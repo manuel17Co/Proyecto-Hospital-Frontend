@@ -7,7 +7,7 @@ export default function MedicosLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="medicosComponent" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }
