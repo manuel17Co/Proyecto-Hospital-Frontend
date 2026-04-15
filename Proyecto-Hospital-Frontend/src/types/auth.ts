@@ -20,4 +20,12 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
+export type MeResponse = {
+  id: string;
+  name: string;
+  surname: string;
+  email: string;
+  verified: boolean;
+};
+
 export type AuthTokens = LoginResponse;

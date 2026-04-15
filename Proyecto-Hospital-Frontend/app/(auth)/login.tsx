@@ -33,7 +33,7 @@ export default function LoginScreen() {
       setSubmitting(true);
       setError(null);
       await login({ email: email.trim().toLowerCase(), password });
-      router.replace('/(tabs)/(citas)/citasComponent');
+      router.replace('/(tabs)/(citas)');
     } catch (e) {
       setError(getErrorMessage(e));
     } finally {

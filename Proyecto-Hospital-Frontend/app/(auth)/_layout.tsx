@@ -16,7 +16,7 @@ export default function AuthLayout() {
   }
 
   if (isAuthenticated) {
-    return <Redirect href="/(tabs)/(citas)/citasComponent" />;
+    return <Redirect href="/(tabs)/(citas)" />;
   }
 
   return (
