@@ -3,5 +3,6 @@ export type Patient = {
   nombre: string;
   apellido: string;
   documento: string;
+  telefono: string;
   estado: "ACTIVO" | "INACTIVO";
 };

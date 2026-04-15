@@ -4,27 +4,34 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 
 import AppButton from "../../../src/components/AppButton";
 import AppInput from "../../../src/components/AppInput";
+import { usePatients } from "../../../src/context/PatientsContext"; // 🔥 IMPORTANTE
 import { globalStyles } from "../../../src/styles/globalStyles";
 
 export default function CrearPaciente() {
   const router = useRouter();
 
+  // 🔥 USAR CONTEXT
+  const { addPatient } = usePatients();
+
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [documento, setDocumento] = useState("");
-  const [estado, setEstado] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [estado, setEstado] = useState<"ACTIVO" | "INACTIVO">("ACTIVO");
 
   const handleCreate = () => {
     if (!nombre || !apellido || !documento || !estado) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
     }
-
-    // 🔥 aquí luego irá el backend
-    console.log({
+    
+    // 🔥 AGREGAR AL CONTEXT
+    addPatient({
+      id: Date.now().toString(),
       nombre,
       apellido,
       documento,
+      telefono,
       estado,
     });
 
@@ -53,18 +60,34 @@ export default function CrearPaciente() {
       />
 
       <AppInput
+        label="Teléfono"
+        value={telefono}
+        onChangeText={setTelefono}
+        placeholder="Ingrese el teléfono"
+      />
+
+      <AppInput
         label="Documento"
         value={documento}
         onChangeText={setDocumento}
         placeholder="Ingrese el documento"
       />
 
-      <AppInput
-        label="Estado"
-        value={estado}
-        onChangeText={setEstado}
-        placeholder="ACTIVO o INACTIVO"
-      />
+      <Text style={{ marginTop: 10, fontWeight: "600" }}>Estado</Text>
+
+<View style={styles.estadoContainer}>
+
+  <AppButton
+    title="ACTIVO"
+    onPress={() => setEstado("ACTIVO")}
+  />
+
+  <AppButton
+    title="INACTIVO"
+    onPress={() => setEstado("INACTIVO")}
+  />
+
+</View>
 
       <View style={styles.button}>
         <AppButton title="Guardar Paciente" onPress={handleCreate} />
@@ -77,5 +100,11 @@ export default function CrearPaciente() {
 const styles = StyleSheet.create({
   button: {
     marginTop: 20,
+  },
+
+  estadoContainer: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 10,
   },
 });
