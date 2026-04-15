@@ -7,7 +7,7 @@ export default function PacientesLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="pacientesComponent" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

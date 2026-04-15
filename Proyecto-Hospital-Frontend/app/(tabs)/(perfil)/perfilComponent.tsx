@@ -1,17 +1,6 @@
-import { Text, View, StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});
+import ProfileComponent from "@/src/components/profile/profile.component";
 
-export default function Perfil() {
-    return (
-        <View style={styles.container}>
-            <Text>vista para el perfil</Text>
-        </View>
-    )
+export default function Index() {
+	return <ProfileComponent />;
 }

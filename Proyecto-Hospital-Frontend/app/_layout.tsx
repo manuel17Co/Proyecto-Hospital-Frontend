@@ -1,32 +1,53 @@
-import { Poppins_400Regular, Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
-import { Drawer } from "expo-router/drawer";
-import { COLORS } from "../src/styles/colors";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { AuthProvider, useAuth } from "@/src/context/auth-context";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
 
-export default function Layout() {
-  const [loaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_700Bold,
+
+function AuthRedirect() {
+  const { accessToken, refreshToken, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+    const inAuthGroup = segments[0] === "(auth)"
+    if (!accessToken && !inAuthGroup) router.replace("/(auth)/login")
+    else if (accessToken && inAuthGroup) router.replace("/(tabs)/(pacientes)")
+  },
+    [
+      accessToken,
+      refreshToken,
+      isLoading,
+      segments
+    ]
+  );
+  return null;
+}
+
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    'FiraSansRegular': require("@/assets/fonts/FiraSans/FiraSans-Regular.ttf"),
+    'FiraSansMedium': require("@/assets/fonts/FiraSans/FiraSans-Medium.ttf"),
+    'FiraSansBold': require("@/assets/fonts/FiraSans/FiraSans-Bold.ttf"),
   });
-
-  if (!loaded) return null;
-
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+  if (!loaded || error) {
+    return null;
+  }
   return (
-    <Drawer
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: COLORS.primary,
-        },
-        headerTintColor: COLORS.white,
-        headerTitleStyle: {
-          fontFamily: "Poppins_700Bold",
-        },
-        drawerActiveTintColor: COLORS.primary,
-        drawerLabelStyle: {
-          fontFamily: "Poppins_400Regular",
-        },
-      }}
-    >
-      <Drawer.Screen name="(tabs)" options={{ title: "Inicio" }} />
-    </Drawer>
+    <AuthProvider>
+      <AuthRedirect />
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, headerTintColor: "red" }} />
+      </Stack>
+    </AuthProvider>
   );
 }

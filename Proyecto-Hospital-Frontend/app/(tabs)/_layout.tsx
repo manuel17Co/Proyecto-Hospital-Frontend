@@ -11,7 +11,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="(pacientes)/pacientesComponent"
+        name="(pacientes)"
         options={{
           title: "Pacientes",
           tabBarIcon: ({ color, size }) => (

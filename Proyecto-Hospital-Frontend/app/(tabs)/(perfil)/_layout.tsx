@@ -1,13 +1,9 @@
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 
-export default function PerfilLayout() {
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="perfilComponent" />
-    </Stack>
-  );
+export default function ProfileLayout() {
+    return (
+        <Stack>
+            <Stack.Screen name="index" options={{ headerTitle: "Perfil" }} />
+        </Stack>
+    );
 }
