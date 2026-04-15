@@ -1,6 +1,16 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import AppButton from '../../../src/components/AppButton';
 import AppInput from '../../../src/components/AppInput';
 import { createAppointment } from '../../../src/services/appointments';
@@ -82,68 +92,85 @@ export default function CrearCitaScreen() {
   }
 
   return (
-    <ScrollView style={globalStyles.container}>
-      <Text style={globalStyles.title}>Crear Cita</Text>
+    <KeyboardAvoidingView
+      style={styles.keyboardContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 86 : 0}
+    >
+      <ScrollView
+        style={globalStyles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+        <Text style={globalStyles.title}>Crear Cita</Text>
 
-      <Text style={styles.sectionLabel}>Paciente</Text>
-      <View style={styles.optionsContainer}>
-        {patients.map((p) => (
-          <TouchableOpacity
-            key={p.id}
-            style={[styles.option, pacienteId === p.id && styles.optionSelected]}
-            onPress={() => setPacienteId(p.id)}
-          >
-            <Text style={[styles.optionText, pacienteId === p.id && styles.optionTextSelected]}>
-              {p.nombre} {p.apellido}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <Text style={styles.sectionLabel}>Paciente</Text>
+        <View style={styles.optionsContainer}>
+          {patients.map((p) => (
+            <TouchableOpacity
+              key={p.id}
+              style={[styles.option, pacienteId === p.id && styles.optionSelected]}
+              onPress={() => setPacienteId(p.id)}
+            >
+              <Text style={[styles.optionText, pacienteId === p.id && styles.optionTextSelected]}>
+                {p.nombre} {p.apellido}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <Text style={styles.sectionLabel}>Médico</Text>
-      <View style={styles.optionsContainer}>
-        {doctors.map((d) => (
-          <TouchableOpacity
-            key={d.id}
-            style={[styles.option, medicoId === d.id && styles.optionSelected]}
-            onPress={() => setMedicoId(d.id)}
-          >
-            <Text style={[styles.optionText, medicoId === d.id && styles.optionTextSelected]}>
-              {d.nombre} {d.apellido ?? ''}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <Text style={styles.sectionLabel}>Médico</Text>
+        <View style={styles.optionsContainer}>
+          {doctors.map((d) => (
+            <TouchableOpacity
+              key={d.id}
+              style={[styles.option, medicoId === d.id && styles.optionSelected]}
+              onPress={() => setMedicoId(d.id)}
+            >
+              <Text style={[styles.optionText, medicoId === d.id && styles.optionTextSelected]}>
+                {d.nombre} {d.apellido ?? ''}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <Text style={styles.sectionLabel}>Instalación</Text>
-      <View style={styles.optionsContainer}>
-        {facilities.map((f) => (
-          <TouchableOpacity
-            key={f.id}
-            style={[styles.option, instalacionId === f.id && styles.optionSelected]}
-            onPress={() => setInstalacionId(f.id)}
-          >
-            <Text style={[styles.optionText, instalacionId === f.id && styles.optionTextSelected]}>
-              {f.nombre}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <Text style={styles.sectionLabel}>Instalación</Text>
+        <View style={styles.optionsContainer}>
+          {facilities.map((f) => (
+            <TouchableOpacity
+              key={f.id}
+              style={[styles.option, instalacionId === f.id && styles.optionSelected]}
+              onPress={() => setInstalacionId(f.id)}
+            >
+              <Text style={[styles.optionText, instalacionId === f.id && styles.optionTextSelected]}>
+                {f.nombre}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <AppInput
-        label="Fecha y hora (ISO)"
-        value={fechaHora}
-        onChangeText={setFechaHora}
-        placeholder="2026-04-15T10:00:00Z"
-      />
-      <AppInput label="Notas" value={notas} onChangeText={setNotas} placeholder="Paciente requiere ayuno" />
+        <AppInput
+          label="Fecha y hora (ISO)"
+          value={fechaHora}
+          onChangeText={setFechaHora}
+          placeholder="2026-04-15T10:00:00Z"
+        />
+        <AppInput label="Notas" value={notas} onChangeText={setNotas} placeholder="Paciente requiere ayuno" />
 
-      <AppButton title={saving ? 'Guardando...' : 'Guardar Cita'} onPress={handleCreate} />
-    </ScrollView>
+        <AppButton title={saving ? 'Guardando...' : 'Guardar Cita'} onPress={handleCreate} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 28,
+  },
   center: {
     justifyContent: 'center',
     alignItems: 'center',
