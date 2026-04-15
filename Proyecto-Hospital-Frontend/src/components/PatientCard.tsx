@@ -1,5 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import { COLORS } from "../styles/colors";
 import { Patient } from "../types/patient";
 
@@ -9,10 +11,6 @@ type Props = {
 
 export default function PatientCard({ patient }: Props) {
   const router = useRouter();
-
-  const handleEdit = () => {
-    router.push(`../editar/${patient.id}`);
-  };
 
   return (
     <View style={styles.card}>
@@ -29,9 +27,26 @@ export default function PatientCard({ patient }: Props) {
         Estado: {patient.estado}
       </Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleEdit}>
-        <Text style={styles.buttonText}>Editar</Text>
-      </TouchableOpacity>
+      {/* 🔥 ACCIONES */}
+      <View style={styles.actions}>
+        
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => router.push(`../detalle/${patient.id}`)}
+        >
+          <Ionicons name="eye-outline" size={18} color={COLORS.white} />
+          <Text style={styles.actionText}>Ver</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => router.push(`../editar/${patient.id}`)}
+        >
+          <Ionicons name="create-outline" size={18} color={COLORS.white} />
+          <Text style={styles.actionText}>Editar</Text>
+        </TouchableOpacity>
+
+      </View>
 
     </View>
   );
@@ -59,19 +74,22 @@ const styles = StyleSheet.create({
   status: {
     color: COLORS.white,
     marginTop: 4,
-    fontSize: 13,
   },
 
-  button: {
+  actions: {
+    flexDirection: "row",
     marginTop: 10,
-    backgroundColor: COLORS.white,
-    paddingVertical: 8,
-    borderRadius: 8,
-    alignItems: "center",
+    gap: 15,
   },
 
-  buttonText: {
-    color: COLORS.primary,
+  actionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+
+  actionText: {
+    color: COLORS.white,
     fontWeight: "600",
   },
 });
