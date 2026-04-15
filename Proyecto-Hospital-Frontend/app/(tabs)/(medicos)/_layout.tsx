@@ -1,13 +1,21 @@
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 
 export default function MedicosLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="medicosComponent" />
-    </Stack>
+    <Drawer screenOptions={{ headerShown: false }}>
+      <Drawer.Screen
+        name="medicosComponent"
+        options={{ drawerLabel: 'Lista de Médicos' }}
+      />
+      <Drawer.Screen
+        name="agregarMedico"
+        options={{ drawerItemStyle: { display: 'none' } }}
+      />
+      {/* Nueva pantalla oculta */}
+      <Drawer.Screen
+        name="editarMedico"
+        options={{ drawerItemStyle: { display: 'none' } }}
+      />
+    </Drawer>
   );
 }

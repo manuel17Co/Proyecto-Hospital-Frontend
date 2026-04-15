@@ -1,13 +1,20 @@
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 
 export default function InstalacionesLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="instalacionesComponent" />
-    </Stack>
+    <Drawer screenOptions={{ headerShown: false }}>
+      <Drawer.Screen
+        name="instalacionesComponent"
+        options={{ drawerLabel: 'Lista de Instalaciones' }}
+      />
+      <Drawer.Screen
+        name="agregarInstalacion"
+        options={{ drawerItemStyle: { display: 'none' } }}
+      />
+      <Drawer.Screen
+        name="editarInstalacion"
+        options={{ drawerItemStyle: { display: 'none' } }}
+      />
+    </Drawer>
   );
 }
