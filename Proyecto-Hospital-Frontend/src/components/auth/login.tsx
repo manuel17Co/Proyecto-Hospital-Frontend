@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Link } from 'expo-router';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert, TouchableOpacity } from 'react-native';
+import { Link, useRouter } from 'expo-router';
 import AppButton from '../AppButton';
 import { ApiError } from '@/src/services/ApiClient';
 import { COLORS } from '@/src/styles/colors';
 import { globalStyles } from '@/src/styles/globalStyles';
 import { useAuth } from '@/src/context/AuthContext';
+import { verifyEmail } from '@/src/services/auth';
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -21,6 +22,7 @@ function getErrorMessage(error: unknown): string {
 
 export default function LoginComponent({ onLoginSuccess }: LoginFormProps) {
   const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -43,6 +45,10 @@ export default function LoginComponent({ onLoginSuccess }: LoginFormProps) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleResendVerification = () => {
+    router.push("/(auth)/validate-email-otp");
   };
 
   return (
@@ -85,6 +91,14 @@ export default function LoginComponent({ onLoginSuccess }: LoginFormProps) {
             <Link href="/(auth)/registro" style={styles.link}>
               ¿No tienes cuenta? Regístrate
             </Link>
+
+            <Link href="/(auth)/resend-verification" style={styles.link}>
+              ¿Cuenta no verificada? Valídala aquí
+            </Link>
+
+            <Link href="/(auth)/forgot-password" style={styles.link}>
+              ¿Olvidaste tu contraseña?
+            </Link>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -117,6 +131,7 @@ const styles = StyleSheet.create({
   error: {
     color: '#B91C1C',
     marginTop: 4,
+    textAlign: 'center'
   },
   link: {
     marginTop: 12,

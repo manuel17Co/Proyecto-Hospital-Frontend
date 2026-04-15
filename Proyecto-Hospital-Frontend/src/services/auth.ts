@@ -5,6 +5,10 @@ export async function signup(payload: SignupRequest): Promise<void> {
   await ApiClient.post<unknown>('/auth/signup', payload);
 }
 
+export const verifyEmail = async (email: string) => {
+  return await ApiClient.post('/auth/verify-email', { email });
+};
+
 export async function validateEmailOtp(payload: ValidateEmailOtpRequest): Promise<void> {
   await ApiClient.post<unknown>('/auth/validate-email-otp', payload);
 }
@@ -15,6 +19,10 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
 
 export async function getMe(): Promise<MeResponse> {
   return ApiClient.get<MeResponse>('/auth/me');
+}
+
+export async function updateMe(payload: Partial<MeResponse>): Promise<MeResponse> {
+  return ApiClient.patch<MeResponse>('/auth/me', payload);
 }
 
 export const forgotPassword = async (email: string) => {
